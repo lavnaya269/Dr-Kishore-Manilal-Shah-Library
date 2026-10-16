@@ -1,0 +1,752 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIWS College | Library Portal</title>
+
+<style>
+:root {
+    --navy:#0b1530;
+    --navy-light:#14264a;
+    --blue:#3978f6;
+    --blue-light:#eaf1ff;
+    --white:#fff;
+    --background:#f4f7fc;
+    --text:#182541;
+    --muted:#71809b;
+    --border:#e4eaf4;
+    --green:#15956b;
+    --red:#d94848;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:var(--background);color:var(--text)}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.app{display:flex;min-height:100vh}
+.sidebar{width:255px;background:var(--navy);color:white;padding:22px 16px;flex-shrink:0}
+.college-brand{display:flex;align-items:center;gap:11px;padding:4px 5px 22px;border-bottom:1px solid #293654}
+.college-logo{width:61px;height:61px;object-fit:contain;background:white;padding:4px;border-radius:9px}
+.college-brand h2{margin:0;font-size:18px}
+.college-brand p{margin:5px 0 0;color:#a9bee8;font-size:11px}
+.menu-label{margin:27px 10px 10px;color:#8294ba;font-size:10px;letter-spacing:1.5px;font-weight:700}
+.nav-link{display:flex;align-items:center;gap:12px;padding:13px 14px;margin:5px 0;border-radius:9px;color:#cbd6ec;text-decoration:none;font-size:14px}
+.nav-link:hover,.nav-link.active{background:#1b3970;color:white}
+.nav-icon{width:22px;text-align:center;font-size:17px}
+.sidebar-footer{margin:35px 8px 0;padding:15px 10px;border-top:1px solid #293654;color:#9caed0;font-size:11px;line-height:1.7}
+.main{min-width:0;flex:1}
+.topbar{background:white;min-height:76px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:15px 30px;gap:15px}
+.topbar h2{margin:0;font-size:20px}
+.topbar p{margin:5px 0 0;color:var(--muted);font-size:12px}
+.admin{display:flex;align-items:center;gap:10px;font-size:13px;font-weight:600}
+.admin-avatar{display:grid;place-items:center;width:38px;height:38px;background:var(--blue-light);color:var(--blue);border-radius:50%}
+.content{padding:28px;max-width:1500px;margin:auto}
+.page{display:none;animation:appear .25s ease}
+.page.active{display:block}
+@keyframes appear{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.welcome{padding:30px;border-radius:16px;color:white;background:linear-gradient(120deg,#10244b,#2455a7);margin-bottom:24px}
+.welcome h1{margin:0 0 10px;font-size:clamp(23px,3vw,31px)}
+.welcome p{color:#d6e3ff;margin:0;line-height:1.7;max-width:580px;font-size:14px}
+.welcome-tag{display:inline-block;margin-bottom:14px;border:1px solid #7098e3;padding:6px 10px;border-radius:20px;font-size:10px;letter-spacing:1px}
+.section-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.section-heading h1{font-size:24px;margin:0}
+.section-heading p{color:var(--muted);font-size:13px;margin:7px 0 0}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:17px;margin-bottom:26px}
+.stat-card,.panel{background:white;border:1px solid var(--border);border-radius:13px;min-width:0}
+.stat-card{padding:21px}
+.stat-top{display:flex;justify-content:space-between;align-items:center}
+.stat-icon{width:42px;height:42px;border-radius:11px;background:var(--blue-light);color:var(--blue);display:grid;place-items:center;font-size:20px}
+.stat-card h3{font-size:27px;margin:17px 0 5px}
+.stat-card p{font-size:12px;color:var(--muted);margin:0}
+.panel{padding:22px;margin-bottom:22px}
+.panel h3{margin:0 0 18px;font-size:16px}
+.quick-actions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px}
+.quick-action{border:1px solid var(--border);border-radius:11px;background:white;padding:17px 12px;text-align:left;color:var(--text)}
+.quick-action:hover{border-color:var(--blue);transform:translateY(-2px)}
+.quick-action span{display:block;color:var(--blue);font-size:22px;margin-bottom:11px}
+.quick-action strong{display:block;font-size:13px}
+.quick-action small{display:block;margin-top:6px;color:var(--muted);font-size:11px}
+.btn{border:0;background:var(--blue);color:white;border-radius:8px;padding:11px 16px;font-size:13px;font-weight:600}
+.btn:hover{filter:brightness(.93)}
+.btn.secondary{background:#edf2fa;color:#233756}
+.btn.danger{background:var(--red)}
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.toolbar input,.toolbar select{flex:1;min-width:160px}
+input,select{width:100%;padding:11px 12px;border:1px solid #dce3ef;border-radius:8px;background:white;color:var(--text);outline:none}
+input:focus,select:focus{border-color:var(--blue);box-shadow:0 0 0 3px #3978f615}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}
+.field label{display:block;font-size:12px;font-weight:600;margin-bottom:7px}
+.field.full{grid-column:1/-1}
+.form-actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
+.message{margin-top:13px;font-size:13px;line-height:1.6}
+.message.success{color:var(--green)}
+.message.error{color:var(--red)}
+.table-wrap{overflow-x:auto;width:100%}
+table{width:100%;border-collapse:collapse;font-size:13px;white-space:nowrap}
+th{text-align:left;padding:13px 12px;background:#f6f8fc;color:#5c6c87;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+td{padding:14px 12px;border-bottom:1px solid #edf0f6}
+tbody tr:hover{background:#fafcff}
+.empty{text-align:center;padding:28px;color:var(--muted)}
+.status{display:inline-block;border-radius:20px;padding:5px 9px;background:#e5f7ef;color:#137a52;font-size:11px}
+.status.returned{background:#edf2fa;color:#52627c}
+footer{color:var(--muted);text-align:center;font-size:11px;padding:20px 0 5px}
+@media(max-width:1050px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.quick-actions{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){
+.app{display:block}.sidebar{width:100%;padding:12px}.college-brand{padding-bottom:12px}
+.college-logo{width:49px;height:49px}.menu-label{margin-top:15px}
+nav{display:flex;gap:5px;overflow-x:auto;padding-bottom:5px}
+.nav-link{flex-shrink:0;padding:10px;font-size:12px}.nav-icon{display:none}
+.sidebar-footer{display:none}.topbar{padding:14px 17px}.content{padding:16px}
+.welcome{padding:23px}.stats{gap:10px}.stat-card{padding:15px}
+.stat-card h3{font-size:23px}.panel{padding:15px}.form-grid{grid-template-columns:1fr}
+.field.full{grid-column:auto}
+}
+@media(max-width:380px){.stats,.quick-actions{grid-template-columns:1fr}}
+</style>
+</head>
+
+<body>
+<div class="app">
+<aside class="sidebar">
+    <div class="college-brand">
+        <img src="siws-logo.png" alt="SIWS College Logo" class="college-logo"
+             onerror="this.style.display='none'">
+        <div><h2>SIWS College</h2><p>Library Management Portal</p></div>
+    </div>
+    <div class="menu-label">MAIN MENU</div>
+    <nav>
+        <a href="#dashboard" class="nav-link active" data-page="dashboard"><span class="nav-icon">▦</span>Dashboard</a>
+        <a href="#books" class="nav-link" data-page="books"><span class="nav-icon">▤</span>Manage Books</a>
+        <a href="#students" class="nav-link" data-page="students"><span class="nav-icon">♙</span>Students</a>
+        <a href="#issue" class="nav-link" data-page="issue"><span class="nav-icon">↗</span>Issue Books</a>
+        <a href="#returns" class="nav-link" data-page="returns"><span class="nav-icon">↩</span>Return Books</a>
+        <a href="#history" class="nav-link" data-page="history"><span class="nav-icon">◷</span>Transaction History</a>
+    </nav>
+    <div class="sidebar-footer">SIWS College<br>Library Administration Portal</div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+    <div><h2 id="page-title">Dashboard</h2><p>SIWS College Library Management System</p></div>
+    <div class="admin"><div class="admin-avatar">A</div><span>Library Admin</span></div>
+</header>
+
+<div class="content">
+<section class="page active" id="page-dashboard">
+    <div class="welcome">
+    <span class="welcome-tag">DR. KISHORE MANILAL SHAH LIBRARY</span>
+    <h1>Welcome to the Library Management Portal</h1>
+    <p>
+        Welcome to the Dr. Kishore Manilal Shah Library Management System,
+        a centralized digital platform designed to simplify and streamline
+        library operations. Manage book collections, student records,
+        book issuance, returns, and transaction history efficiently through
+        one user-friendly interface. Our aim is to improve accuracy,
+        accessibility, and the overall efficiency of library services.
+    </p>
+</div>
+   
+    <div class="stats">
+        <div class="stat-card"><div class="stat-top"><span class="stat-icon">▤</span></div><h3 id="stat-books">—</h3><p>Total book titles</p></div>
+        <div class="stat-card"><div class="stat-top"><span class="stat-icon">♙</span></div><h3 id="stat-students">—</h3><p>Registered students</p></div>
+        <div class="stat-card"><div class="stat-top"><span class="stat-icon">↗</span></div><h3 id="stat-issued">—</h3><p>Currently issued books</p></div>
+        <div class="stat-card"><div class="stat-top"><span class="stat-icon">✓</span></div><h3 id="stat-returned">—</h3><p>Returned transactions</p></div>
+    </div>
+    <div class="panel">
+        <h3>Quick Actions</h3>
+        <div class="quick-actions">
+            <button class="quick-action" data-go="books"><span>＋</span><strong>Manage Books</strong><small>Add and view books</small></button>
+            <button class="quick-action" data-go="students"><span>♙</span><strong>Register Student</strong><small>Manage student details</small></button>
+            <button class="quick-action" data-go="issue"><span>↗</span><strong>Issue a Book</strong><small>Record a new issue</small></button>
+            <button class="quick-action" data-go="history"><span>◷</span><strong>View History</strong><small>Review transactions</small></button>
+        </div>
+    </div>
+    <div class="panel">
+        <div class="section-heading"><div><h3>Recent Transactions</h3><p>Latest activity recorded by the library</p></div><button class="btn secondary" data-go="history">View all</button></div>
+        <div class="table-wrap"><table>
+            <thead><tr><th>Transaction ID</th><th>Student</th><th>Book</th><th>Issue Date</th><th>Status</th></tr></thead>
+            <tbody id="recent-body"><tr><td colspan="5" class="empty">Loading transactions...</td></tr></tbody>
+        </table></div>
+    </div>
+</section>
+
+<section class="page" id="page-books">
+    <div class="section-heading"><div><h1>Manage Books</h1><p>Add books and maintain the college library collection.</p></div><button class="btn" data-scroll="book-form">＋ Add Book</button></div>
+    <div class="panel" id="book-form">
+        <h3>Add a New Book</h3>
+        <form id="add-book-form">
+            <div class="form-grid">
+                <div class="field"><label for="book-title">Book Title *</label><input id="book-title" required maxlength="150" placeholder="Enter book title"></div>
+                <div class="field"><label for="book-author">Author *</label><input id="book-author" required maxlength="100" placeholder="Enter author name"></div>
+                <div class="field"><label for="book-category">Category</label><input id="book-category" maxlength="80" placeholder="e.g. Computer Science"></div>
+                <div class="field"><label for="book-quantity">Quantity *</label><input id="book-quantity" type="number" min="1" value="1" required></div>
+            </div>
+            <div class="form-actions"><button class="btn" type="submit">Save Book</button><button class="btn secondary" type="reset">Clear</button></div>
+            <div class="message" id="book-message" role="status"></div>
+        </form>
+    </div>
+    <div class="panel">
+        <div class="section-heading"><div><h3>Book Collection</h3><p id="book-count">Loading books...</p></div><button class="btn secondary" id="refresh-books">↻ Refresh</button></div>
+        <div class="toolbar"><input id="book-search" placeholder="Search title, author or category..."></div>
+        <div class="table-wrap"><table><thead><tr><th>Book ID</th><th>Title</th><th>Author</th><th>Category</th><th>Quantity</th></tr></thead><tbody id="books-body"><tr><td colspan="5" class="empty">Loading books...</td></tr></tbody></table></div>
+    </div>
+</section>
+
+<section class="page" id="page-students">
+    <div class="section-heading"><div><h1>Student Management</h1><p>Register and view SIWS College library members.</p></div></div>
+    <div class="panel">
+        <h3>Register Student</h3>
+        <form id="add-student-form">
+            <div class="form-grid">
+                <div class="field"><label for="student-name">Full Name *</label><input id="student-name" required maxlength="100" placeholder="Enter student name"></div>
+                <div class="field"><label for="student-roll">Roll Number *</label><input id="student-roll" required maxlength="30" placeholder="Enter roll number"></div>
+                <div class="field"><label for="student-department">Department</label><input id="student-department" maxlength="100" placeholder="e.g. BSc IT"></div>
+                <div class="field"><label for="student-phone">Phone</label><input id="student-phone" maxlength="15" placeholder="Phone number"></div>
+            </div>
+            <div class="form-actions"><button class="btn" type="submit">Register Student</button><button class="btn secondary" type="reset">Clear</button></div>
+            <div class="message" id="student-message" role="status"></div>
+        </form>
+    </div>
+    <div class="panel">
+        <h3>Registered Students</h3>
+        <div class="toolbar"><input id="student-search" placeholder="Search name or roll number..."><button class="btn secondary" id="refresh-students">↻ Refresh</button></div>
+        <div class="table-wrap"><table><thead><tr><th>ID</th><th>Name</th><th>Roll Number</th><th>Department</th><th>Phone</th></tr></thead><tbody id="students-body"><tr><td colspan="5" class="empty">Loading students...</td></tr></tbody></table></div>
+    </div>
+</section>
+
+<section class="page" id="page-issue">
+    <div class="section-heading"><div><h1>Issue Books</h1><p>Record a book loan to a registered student.</p></div></div>
+    <div class="panel">
+        <h3>Issue a Book</h3>
+        <form id="issue-form">
+            <div class="form-grid">
+                <div class="field"><label for="issue-student">Select Student *</label><select id="issue-student" required><option value="">Load students first</option></select></div>
+                <div class="field"><label for="issue-book">Select Book *</label><select id="issue-book" required><option value="">Load books first</option></select></div>
+                <div class="field"><label for="issue-date">Issue Date *</label><input id="issue-date" type="date" required></div>
+            </div>
+            <div class="form-actions"><button class="btn" type="submit">Confirm Issue</button><button class="btn secondary" type="button" id="reload-issue-options">Reload Options</button></div>
+            <div class="message" id="issue-message" role="status"></div>
+        </form>
+    </div>
+    <div class="panel"><h3>Currently Issued Books</h3><div class="table-wrap"><table><thead><tr><th>Issue ID</th><th>Student</th><th>Book</th><th>Issue Date</th><th>Status</th></tr></thead><tbody id="issues-body"><tr><td colspan="5" class="empty">Loading issues...</td></tr></tbody></table></div></div>
+</section>
+
+<section class="page" id="page-returns">
+    <div class="section-heading"><div><h1>Return Books</h1><p>Record the return of an issued book.</p></div></div>
+    <div class="panel">
+        <h3>Active Issues</h3>
+        <div class="table-wrap"><table><thead><tr><th>Issue ID</th><th>Student</th><th>Book</th><th>Issue Date</th><th>Action</th></tr></thead><tbody id="returns-body"><tr><td colspan="5" class="empty">Loading active issues...</td></tr></tbody></table></div>
+        <div class="message" id="return-message" role="status"></div>
+        <button class="btn secondary" id="refresh-returns">↻ Refresh Issues</button>
+    </div>
+</section>
+
+<section class="page" id="page-history">
+    <div class="section-heading"><div><h1>Transaction History</h1><p>Review book issue and return records.</p></div><button class="btn secondary" id="refresh-history">↻ Refresh</button></div>
+    <div class="panel">
+        <div class="toolbar"><input id="history-search" placeholder="Search student or book..."><select id="history-filter"><option value="All">All Transactions</option><option value="Issued">Issued</option><option value="Returned">Returned</option></select></div>
+        <div class="table-wrap"><table><thead><tr><th>Issue ID</th><th>Student</th><th>Book</th><th>Issue Date</th><th>Return Date</th><th>Status</th></tr></thead><tbody id="history-body"><tr><td colspan="6" class="empty">Loading history...</td></tr></tbody></table></div>
+    </div>
+</section>
+<footer>SIWS College · Library Management Portal</footer>
+</div>
+</main>
+</div>
+
+<script>
+"use strict";
+
+const API = {
+    books: "/api/books",
+    students: "/api/students",
+    issues: "/api/issues",
+    returns: "/api/returns",
+    history: "/api/history"
+};
+
+const state = {books: [], students: [], issues: [], history: []};
+const $ = id => document.getElementById(id);
+
+function escapeHTML(value) {
+    return String(value ?? "").replace(/[&<>"']/g, char => ({
+        "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
+    })[char]);
+}
+
+function showMessage(id, message, type = "") {
+    const element = $(id);
+    if (!element) return;
+    element.textContent = message;
+    element.className = "message " + type;
+}
+
+async function apiRequest(url, options = {}) {
+    const response = await fetch(url, {
+        ...options,
+        headers: {...(options.headers || {})}
+    });
+    const text = await response.text();
+
+    if (!response.ok) {
+        throw new Error(text || `Request failed (${response.status})`);
+    }
+    if (!text.trim()) return null;
+
+    try { return JSON.parse(text); }
+    catch { return text; }
+}
+
+function rowsFrom(data) {
+    if (Array.isArray(data)) return data;
+    if (!data || typeof data !== "object") return [];
+    for (const key of ["data", "books", "students", "issues", "history"]) {
+        if (Array.isArray(data[key])) return data[key];
+    }
+    return [];
+}
+
+function pick(item, ...keys) {
+    for (const key of keys) {
+        if (item && item[key] !== undefined && item[key] !== null) return item[key];
+    }
+    return "";
+}
+
+function displayDate(value) {
+    return value ? escapeHTML(String(value).slice(0, 10)) : "—";
+}
+
+function emptyRow(colspan, message) {
+    return `<tr><td colspan="${colspan}" class="empty">${escapeHTML(message)}</td></tr>`;
+}
+
+function setPage(page) {
+    const valid = ["dashboard", "books", "students", "issue", "returns", "history"];
+    if (!valid.includes(page)) page = "dashboard";
+
+    document.querySelectorAll(".page").forEach(section =>
+        section.classList.toggle("active", section.id === "page-" + page)
+    );
+    document.querySelectorAll(".nav-link").forEach(link =>
+        link.classList.toggle("active", link.dataset.page === page)
+    );
+
+    const titles = {
+        dashboard:"Dashboard", books:"Manage Books", students:"Student Management",
+        issue:"Issue Books", returns:"Return Books", history:"Transaction History"
+    };
+    $("page-title").textContent = titles[page];
+    history.replaceState(null, "", "#" + page);
+
+    if (page === "dashboard") loadDashboard();
+    if (page === "books") loadBooks();
+    if (page === "students") loadStudents();
+    if (page === "issue") loadIssueOptions();
+    if (page === "returns") loadReturns();
+    if (page === "history") loadHistory();
+}
+
+document.querySelectorAll("[data-page]").forEach(link =>
+    link.addEventListener("click", event => {
+        event.preventDefault();
+        setPage(link.dataset.page);
+    })
+);
+document.querySelectorAll("[data-go]").forEach(button =>
+    button.addEventListener("click", () => setPage(button.dataset.go))
+);
+document.querySelectorAll("[data-scroll]").forEach(button =>
+    button.addEventListener("click", () =>
+        $(button.dataset.scroll)?.scrollIntoView({behavior:"smooth", block:"start"})
+    )
+);
+
+/* BOOKS */
+
+async function loadBooks() {
+    $("books-body").innerHTML = emptyRow(5, "Loading books...");
+    try {
+        state.books = rowsFrom(await apiRequest(API.books));
+        renderBooks();
+        $("book-count").textContent = `${state.books.length} book records`;
+        $("stat-books").textContent = state.books.length;
+    } catch (error) {
+        $("books-body").innerHTML = emptyRow(5, "Could not load books. Check the Java server.");
+        $("book-count").textContent = "Unable to load records";
+        console.error("Load books:", error);
+    }
+}
+
+function renderBooks() {
+    const search = $("book-search").value.trim().toLowerCase();
+    const filtered = state.books.filter(book =>
+        [pick(book,"title"), pick(book,"author"), pick(book,"category")]
+            .join(" ").toLowerCase().includes(search)
+    );
+
+    $("books-body").innerHTML = filtered.length ? filtered.map(book => `
+        <tr>
+            <td>${escapeHTML(pick(book,"book_id","bookId","id"))}</td>
+            <td>${escapeHTML(pick(book,"title"))}</td>
+            <td>${escapeHTML(pick(book,"author"))}</td>
+            <td>${escapeHTML(pick(book,"category") || "General")}</td>
+            <td>${escapeHTML(pick(book,"quantity") || 0)}</td>
+        </tr>`).join("") : emptyRow(5, "No matching books found.");
+}
+
+$("book-search").addEventListener("input", renderBooks);
+$("refresh-books").addEventListener("click", loadBooks);
+
+$("add-book-form").addEventListener("submit", async event => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const title = $("book-title").value.trim();
+    const author = $("book-author").value.trim();
+    const category = $("book-category").value.trim();
+    const quantity = Number($("book-quantity").value);
+
+    if (!title || !author || !Number.isInteger(quantity) || quantity < 1) {
+        showMessage("book-message", "Enter a title, author and valid quantity.", "error");
+        return;
+    }
+
+    const button = form.querySelector('[type="submit"]');
+    button.disabled = true;
+    showMessage("book-message", "Saving book...");
+
+    try {
+        const body = new URLSearchParams({
+            title, author, category, quantity:String(quantity)
+        });
+        await apiRequest(API.books, {
+            method:"POST",
+            headers:{"Content-Type":"application/x-www-form-urlencoded;charset=UTF-8"},
+            body
+        });
+        form.reset();
+        $("book-quantity").value = "1";
+        showMessage("book-message", "Book saved successfully!", "success");
+        await loadBooks();
+    } catch (error) {
+        showMessage("book-message", "Could not save the book. Check the server response.", "error");
+        console.error("Save book:", error);
+    } finally {
+        button.disabled = false;
+    }
+});
+
+/* STUDENTS */
+
+async function loadStudents() {
+    $("students-body").innerHTML = emptyRow(5, "Loading students...");
+    try {
+        state.students = rowsFrom(await apiRequest(API.students));
+        renderStudents();
+        $("stat-students").textContent = state.students.length;
+    } catch (error) {
+        $("students-body").innerHTML = emptyRow(5, "Could not load students. Check the Java API.");
+        console.error("Load students:", error);
+    }
+}
+
+function renderStudents() {
+    const search = $("student-search").value.trim().toLowerCase();
+    const filtered = state.students.filter(student =>
+        [pick(student,"name"),pick(student,"roll_number","rollNumber")]
+            .join(" ").toLowerCase().includes(search)
+    );
+
+    $("students-body").innerHTML = filtered.length ? filtered.map(student => `
+        <tr>
+            <td>${escapeHTML(pick(student,"student_id","studentId","id"))}</td>
+            <td>${escapeHTML(pick(student,"name"))}</td>
+            <td>${escapeHTML(pick(student,"roll_number","rollNumber"))}</td>
+            <td>${escapeHTML(pick(student,"department") || "—")}</td>
+            <td>${escapeHTML(pick(student,"phone") || "—")}</td>
+        </tr>`).join("") : emptyRow(5, "No students found.");
+}
+
+$("student-search").addEventListener("input", renderStudents);
+$("refresh-students").addEventListener("click", loadStudents);
+
+$("add-student-form").addEventListener("submit", async event => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const student = {
+        name:$("student-name").value.trim(),
+        roll_number:$("student-roll").value.trim(),
+        department:$("student-department").value.trim(),
+        phone:$("student-phone").value.trim()
+    };
+
+    const button = form.querySelector('[type="submit"]');
+    button.disabled = true;
+
+    try {
+        await apiRequest(API.students, {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify(student)
+        });
+        form.reset();
+        showMessage("student-message", "Student registered successfully.", "success");
+        await loadStudents();
+    } catch (error) {
+        showMessage("student-message", "Student registration failed. Check the Java API and terminal.", "error");
+        console.error("Register student:", error);
+    } finally {
+        button.disabled = false;
+    }
+});
+
+/* ISSUE BOOKS */
+
+async function loadIssueOptions() {
+    $("issue-student").innerHTML = '<option value="">Loading students...</option>';
+    $("issue-book").innerHTML = '<option value="">Loading books...</option>';
+
+    try {
+        const [studentsData, booksData] = await Promise.all([
+            apiRequest(API.students), apiRequest(API.books)
+        ]);
+        state.students = rowsFrom(studentsData);
+        state.books = rowsFrom(booksData);
+
+        $("issue-student").innerHTML = '<option value="">Select a student</option>' +
+            state.students.map(student => `
+                <option value="${escapeHTML(pick(student,"student_id","studentId","id"))}">
+                    ${escapeHTML(pick(student,"name"))} — ${escapeHTML(pick(student,"roll_number","rollNumber"))}
+                </option>`).join("");
+
+        const available = state.books.filter(book => Number(pick(book,"quantity")) > 0);
+        $("issue-book").innerHTML = '<option value="">Select a book</option>' +
+            available.map(book => `
+                <option value="${escapeHTML(pick(book,"book_id","bookId","id"))}">
+                    ${escapeHTML(pick(book,"title"))} (${escapeHTML(pick(book,"quantity"))} available)
+                </option>`).join("");
+
+        await loadActiveIssues();
+    } catch (error) {
+        $("issue-student").innerHTML = '<option value="">Could not load students</option>';
+        $("issue-book").innerHTML = '<option value="">Could not load books</option>';
+        showMessage("issue-message", "Could not load students or books. Check the API.", "error");
+        console.error("Issue options:", error);
+    }
+}
+
+$("reload-issue-options").addEventListener("click", loadIssueOptions);
+$("issue-date").value = new Date().toISOString().slice(0,10);
+
+$("issue-form").addEventListener("submit", async event => {
+    event.preventDefault();
+    const issue = {
+        student_id:Number($("issue-student").value),
+        book_id:Number($("issue-book").value),
+        issue_date:$("issue-date").value
+    };
+
+    if (!issue.student_id || !issue.book_id || !issue.issue_date) {
+        showMessage("issue-message", "Select a student, a book and an issue date.", "error");
+        return;
+    }
+
+    try {
+        await apiRequest(API.issues, {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify(issue)
+        });
+        showMessage("issue-message", "Book issued successfully.", "success");
+        await loadIssueOptions();
+        await loadBooks();
+        await loadDashboard();
+    } catch (error) {
+        showMessage("issue-message", "Book issue failed. Check the Java API and terminal.", "error");
+        console.error("Issue book:", error);
+    }
+});
+
+async function loadActiveIssues() {
+    try {
+        state.issues = rowsFrom(await apiRequest(API.issues));
+        renderIssues();
+    } catch (error) {
+        $("issues-body").innerHTML = emptyRow(5, "Could not load issue records.");
+        console.error("Load active issues:", error);
+    }
+}
+
+function studentName(id) {
+    const student = state.students.find(s =>
+        String(pick(s,"student_id","studentId","id")) === String(id)
+    );
+    return student ? pick(student,"name") : "Student #" + id;
+}
+
+function bookName(id) {
+    const book = state.books.find(b =>
+        String(pick(b,"book_id","bookId","id")) === String(id)
+    );
+    return book ? pick(book,"title") : "Book #" + id;
+}
+
+function renderIssues() {
+    const active = state.issues.filter(issue =>
+        String(pick(issue,"status") || "Issued").toLowerCase() === "issued"
+    );
+
+    $("issues-body").innerHTML = active.length ? active.map(issue => `
+        <tr>
+            <td>${escapeHTML(pick(issue,"issue_id","issueId","id"))}</td>
+            <td>${escapeHTML(pick(issue,"student_name","studentName") || studentName(pick(issue,"student_id","studentId")))}</td>
+            <td>${escapeHTML(pick(issue,"book_title","bookTitle") || bookName(pick(issue,"book_id","bookId")))}</td>
+            <td>${displayDate(pick(issue,"issue_date","issueDate"))}</td>
+            <td><span class="status">Issued</span></td>
+        </tr>`).join("") : emptyRow(5, "No active issues found.");
+
+    $("returns-body").innerHTML = active.length ? active.map(issue => `
+        <tr>
+            <td>${escapeHTML(pick(issue,"issue_id","issueId","id"))}</td>
+            <td>${escapeHTML(pick(issue,"student_name","studentName") || studentName(pick(issue,"student_id","studentId")))}</td>
+            <td>${escapeHTML(pick(issue,"book_title","bookTitle") || bookName(pick(issue,"book_id","bookId")))}</td>
+            <td>${displayDate(pick(issue,"issue_date","issueDate"))}</td>
+            <td><button class="btn return-one" data-id="${escapeHTML(pick(issue,"issue_id","issueId","id"))}">Return Book</button></td>
+        </tr>`).join("") : emptyRow(5, "No books are currently issued.");
+
+    $("stat-issued").textContent = active.length;
+}
+
+$("returns-body").addEventListener("click", async event => {
+    const button = event.target.closest(".return-one");
+    if (!button || !confirm("Confirm that this book has been returned?")) return;
+
+    try {
+        await apiRequest(API.returns, {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                issue_id:Number(button.dataset.id),
+                return_date:new Date().toISOString().slice(0,10)
+            })
+        });
+        showMessage("return-message", "Book returned successfully.", "success");
+        await loadReturns();
+        await loadBooks();
+        await loadDashboard();
+        await loadHistory();
+    } catch (error) {
+        showMessage("return-message", "Return failed. Check the Java API and terminal.", "error");
+        console.error("Return book:", error);
+    }
+});
+
+async function loadReturns() {
+    try {
+        const [issuesData, studentsData, booksData] = await Promise.all([
+            apiRequest(API.issues), apiRequest(API.students), apiRequest(API.books)
+        ]);
+        state.issues = rowsFrom(issuesData);
+        state.students = rowsFrom(studentsData);
+        state.books = rowsFrom(booksData);
+        renderIssues();
+    } catch (error) {
+        $("returns-body").innerHTML = emptyRow(5, "Could not load active issues. Check the APIs.");
+        console.error("Load returns:", error);
+    }
+}
+$("refresh-returns").addEventListener("click", loadReturns);
+
+/* TRANSACTION HISTORY */
+
+async function loadHistory() {
+    $("history-body").innerHTML = emptyRow(6, "Loading transaction history...");
+    try {
+        state.history = rowsFrom(await apiRequest(API.history));
+        renderHistory();
+    } catch (error) {
+        $("history-body").innerHTML = emptyRow(6, "Could not load history. Check the Java API.");
+        console.error("Load history:", error);
+    }
+}
+
+function renderHistory() {
+    const search = $("history-search").value.trim().toLowerCase();
+    const filter = $("history-filter").value;
+
+    const filtered = state.history.filter(item => {
+        const status = String(pick(item,"status") || "").toLowerCase();
+        const text = [pick(item,"student_name","studentName"),pick(item,"book_title","bookTitle")]
+            .join(" ").toLowerCase();
+        return (filter === "All" || status === filter.toLowerCase()) && text.includes(search);
+    });
+
+    $("history-body").innerHTML = filtered.length ? filtered.map(item => {
+        const status = String(pick(item,"status") || "Issued");
+        const returned = status.toLowerCase() === "returned";
+        return `<tr>
+            <td>${escapeHTML(pick(item,"issue_id","issueId","id"))}</td>
+            <td>${escapeHTML(pick(item,"student_name","studentName") || studentName(pick(item,"student_id","studentId")))}</td>
+            <td>${escapeHTML(pick(item,"book_title","bookTitle") || bookName(pick(item,"book_id","bookId")))}</td>
+            <td>${displayDate(pick(item,"issue_date","issueDate"))}</td>
+            <td>${displayDate(pick(item,"return_date","returnDate"))}</td>
+            <td><span class="status ${returned ? "returned" : ""}">${escapeHTML(status)}</span></td>
+        </tr>`;
+    }).join("") : emptyRow(6, "No matching transactions found.");
+
+    $("stat-returned").textContent = state.history.filter(item =>
+        String(pick(item,"status")).toLowerCase() === "returned"
+    ).length;
+}
+
+$("history-search").addEventListener("input", renderHistory);
+$("history-filter").addEventListener("change", renderHistory);
+$("refresh-history").addEventListener("click", loadHistory);
+
+/* DASHBOARD */
+
+async function loadDashboard() {
+    await loadBooks();
+
+    try {
+        state.students = rowsFrom(await apiRequest(API.students));
+        $("stat-students").textContent = state.students.length;
+    } catch (error) {
+        $("stat-students").textContent = "—";
+        console.error("Dashboard students:", error);
+    }
+
+    try {
+        state.history = rowsFrom(await apiRequest(API.history));
+        const issued = state.history.filter(item =>
+            String(pick(item,"status")).toLowerCase() === "issued"
+        );
+
+        $("stat-issued").textContent = issued.length;
+        $("stat-returned").textContent = state.history.filter(item =>
+            String(pick(item,"status")).toLowerCase() === "returned"
+        ).length;
+
+        const recent = [...state.history].reverse().slice(0,5);
+        $("recent-body").innerHTML = recent.length ? recent.map(item => `
+            <tr>
+                <td>${escapeHTML(pick(item,"issue_id","issueId","id"))}</td>
+                <td>${escapeHTML(pick(item,"student_name","studentName") || studentName(pick(item,"student_id","studentId")))}</td>
+                <td>${escapeHTML(pick(item,"book_title","bookTitle") || bookName(pick(item,"book_id","bookId")))}</td>
+                <td>${displayDate(pick(item,"issue_date","issueDate"))}</td>
+                <td><span class="status ${String(pick(item,"status")).toLowerCase() === "returned" ? "returned" : ""}">${escapeHTML(pick(item,"status") || "Issued")}</span></td>
+            </tr>`).join("") : emptyRow(5, "No transactions recorded yet.");
+    } catch (error) {
+        $("stat-issued").textContent = "—";
+        $("stat-returned").textContent = "—";
+        $("recent-body").innerHTML = emptyRow(5, "Could not load transaction history.");
+        console.error("Dashboard history:", error);
+    }
+}
+
+/* STARTUP */
+
+setPage(location.hash.replace("#","") || "dashboard");
+</script>
+</body>
+</html>
